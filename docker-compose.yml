@@ -1,0 +1,91 @@
+services:
+  nginx:
+    image: nginx:latest
+    container_name: taskm_project_nginx
+    volumes:
+      - ./:/var/www/backend
+      - ./_docker/images/nginx/localhost:/etc/nginx/conf.d
+      - nginx_data:/etc/nginx
+      - nginx_logs:/etc/nginx/logs
+    ports:
+      - 8000:80
+    restart: always
+    depends_on:
+      - php
+    networks:
+      - taskm_project_network
+
+  php:
+    build:
+      context: .
+      dockerfile: ./_docker/images/php/Dockerfile
+    container_name: taskm_project_php
+    volumes:
+      - ./:/var/www/backend
+    restart: always
+    networks:
+      - taskm_project_network
+
+  postgres:
+    image: postgres:14
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: taskdb
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: secret
+    container_name: taskm_project_postgres
+    networks:
+      - taskm_project_network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: taskm_project_pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@task.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+    restart: always
+    networks:
+      - taskm_project_network
+   
+  redis:
+    image: redis:latest
+    container_name: taskm_project_redis
+    command:
+      [
+        "sh",
+        "-c",
+        "redis-server --requirepass $${REDIS_PASSWORD}"
+      ]
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    networks:
+      - taskm_project_network
+
+networks:
+  taskm_project_network:
+    driver: bridge
+
+volumes:
+  nginx_data:
+    driver: local
+  nginx_logs:
+    driver: local
+  postgres_data:
+    driver: local
+  pgadmin_data:  
+    driver: local
+  redis_data:
+    driver: local
