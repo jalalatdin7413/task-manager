@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\Core\Auth\Otp;
+namespace App\Actions\Core\v1\Auth\Otp;
 
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;

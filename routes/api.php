@@ -29,5 +29,3 @@ Route::prefix('auth')->middleware('api')->group(function () {
         Route::post('logout', [AuthController::class, 'logout']);
     });
 });
-
-

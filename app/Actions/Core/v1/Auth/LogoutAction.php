@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\Core\Auth;
+namespace App\Actions\Core\v1\Auth;
 
 use App\Traits\ResponseTrait;
 use Illuminate\Http\JsonResponse;
